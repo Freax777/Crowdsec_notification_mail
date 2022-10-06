@@ -1,0 +1,25 @@
+#!/bin/bash
+###################################
+# Script Crowdsec Notif           #
+#                                 #  
+# Le 24/07/2022 par Freax777      #
+###################################
+#Variables
+mail="" #Votre mail
+DATA="$HOME/crowdsec"
+NAME=$(date +%Y%m%d-%H%M%S)
+#FIN
+mkdir ${DATA}
+cscli alerts list > ${DATA}/alerts.txt
+cscli decisions list > ${DATA}/decisions.txt
+check=$(cat ${DATA}/decisions.txt | wc -l)
+    
+    if [ ${check} -gt 1 ]
+        then
+        file="-A ${DATA}/decisions.txt"
+        else
+   	    false
+    fi
+
+echo "Crowdsec : ${NAME} Alerts et Décision crowdsec"| mail -s "CROWDSEC" ${mail} -A ${DATA}/alerts.txt ${file}
+rm -r ${DATA}
